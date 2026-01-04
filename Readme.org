@@ -90,34 +90,34 @@ The usage of the tool is as follows.
 cw [TARGET] [COMMAND]
 #+end_quote
 Where target can be a Path or a Favourite.
-- No command\n
-  cd to path or favourite.
-- List\n
-  List all favourites.
+- No command
+  - cd to path or favourite.
+- List
+  - List all favourites.
 - Edit
-  Edit file from path or favourite.
+  - Edit file from path or favourite.
 - Add
-  Add path to favourites.
+  - Add path to favourites.
 - Remove
-  Remove favourite.
+  - Remove favourite.
 - Tree
-  Show directory tree in current directory.
-  - path
-    Show tree in path.
-  - depth
-    Control depth of folders shown.
-  - entries
-    Control maximum entries in folders.
-  - hidden
-    Show hidden files.
+  - Show directory tree in current directory.
+    - path
+      - Show tree in path.
+    - depth
+      - Control depth of folders shown.
+    - entries
+      - Control maximum entries in folders.
+    - hidden
+      - Show hidden files.
 - Back
-  cd to previous location.
-  - number
-    Jump back "n" times to a location.
-  - list
-    List last 10 states.
+  - cd to previous location.
+    - number
+      - Jump back "n" times to a location.
+    - list
+      - List last 10 states.
 - Help
-  Show help for using the tool.
+  - Show help for using the tool.
 
 * Improvements
 - Learn most used paths and replace or integrate with static favourites.
