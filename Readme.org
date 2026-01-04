@@ -41,7 +41,9 @@ It includes, Favourite list, State list and shell wrapper.
 The favourites are a static list.
 We can add, remove and list favourites.
 List example:
+
 [[/images/list.png]]
+
 Favourites can also be a file, if we "cd" to a file we land in the directory that contains it, it doesn't open at once, this is to keep piping safe.
 ** Navigation
 The tool focuses on static favourites as a way to get around quickly.
@@ -55,14 +57,18 @@ The tool will always look for a favourite before resolving a potential path.
 At the same time, whenever we change directory using "cw" a state(stack) is kept.
 That means we can use "back" to jump back to where we were.
 We can also list the 10 last states:
+
 [[/images/back.png]]
+
 ** Autocomplete
 There is autocomplete for paths, which is handled by the shell and shell wrapper.
 Autocomplete for favourites are handled in the rust code.
 ** Tree
 To get a god sense of what folder structure we are currently in, or on the way to, we can use the Tree command.
 It lists the directory structure in a pretty way to give an overview:
+
 [[/images/tree.png]]
+
 The depth can be controlled beyond the default value.
 ** Piping
 The tool is safe for Unix piping. That mean we can for example use it together with "fzf":
