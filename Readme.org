@@ -90,9 +90,9 @@ The usage of the tool is as follows.
 cw [TARGET] [COMMAND]
 #+end_quote
 Where target can be a Path or a Favourite.
-- No command
+- No command\n
   cd to path or favourite.
-- List
+- List\n
   List all favourites.
 - Edit
   Edit file from path or favourite.
