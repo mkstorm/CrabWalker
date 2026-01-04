@@ -1,0 +1,10 @@
+[package]
+name = "CrabWalker"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.53", features = ["derive", "env"] }
+dirs-next = "2.0.0"
+walkdir = "2.5.0"
+whoami = "1.6.1"

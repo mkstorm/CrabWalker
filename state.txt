@@ -1,0 +1,2 @@
+/home/martin
+/mnt/data/Documents
