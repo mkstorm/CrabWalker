@@ -58,7 +58,7 @@ At the same time, whenever we change directory using "cw" a state(stack) is kept
 That means we can use "back" to jump back to where we were.
 We can also list the 10 last states:
 
-[[/images/back.png]]
+[[/images/backl.png]]
 
 ** Autocomplete
 There is autocomplete for paths, which is handled by the shell and shell wrapper.
