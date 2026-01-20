@@ -2,9 +2,16 @@
 # source "$HOME/.config/crabwalker/cw.sh"
 
 cw() {
+
+    if [ $# -eq 0 ]; then
+        command -p cw "$PWD"
+        return
+    fi
+
     case "$1" in
-        list|add|remove|tree|edit|help|--help|-h)
+        list|add|remove|tree|edit|help|--help|-h|-a)
             command -p cw "$PWD" "$@"
+            return
             ;;
         back)
             if [[ "$2" == "-l" ]]; then
@@ -34,14 +41,13 @@ cw() {
     esac
 }
 
-#Autocomplete
 _cw_complete() {
     local cur
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     COMPREPLY=()
 
-    # 1️⃣ Filesystem: files + directories
+    #Filesystem: files + directories
     while IFS= read -r path; do
         if [ -d "$path" ]; then
             COMPREPLY+=("$path/")  # add trailing slash for directories
@@ -50,17 +56,17 @@ _cw_complete() {
         fi
     done < <(compgen -f -- "$cur")
 
-    # 2️⃣ Favourites from Rust binary
-    if command -v cw >/dev/null 2>&1; then
-        while IFS= read -r fav; do
-            if [ -d "$fav" ]; then
-                COMPREPLY+=("$fav/")
-            else
-                COMPREPLY+=("$fav")
-            fi
-        done < <(command -p cw --complete "$cur" 2>/dev/null)
-    fi
+    #Favourites from Rust binary
+    while IFS= read -r fav; do
+        case "$fav" in
+            fav:*)
+                fav="${fav#fav:}"
+                COMPREPLY+=("$fav")   # NEVER add slash
+                ;;
+        esac
+    done < <(command -p cw --complete "$cur" 2>/dev/null)
 }
 
-# Bind it to cw function
+
+# Bind it to your cw function
 complete -o nospace -F _cw_complete cw

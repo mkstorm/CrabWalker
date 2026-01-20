@@ -206,11 +206,13 @@ fn main() -> Result<()> {
                 eprintln!("Wrong path/favourite")
             } else {
                 let path = get_current_dir();
+                //eprintln!("DEBUG: current_dir = {:?}", path);
                 let entries = if cli.all {
                     entries_in_dir(path.as_path(), true)
                 } else {
                     entries_in_dir(path.as_path(), false)
                 };
+                //eprintln!("stdout is tty? {}", stdout_is_tty());
                 if stdout_is_tty() {
 
                     let names: Vec<String> = entries
@@ -236,15 +238,16 @@ fn main() -> Result<()> {
                     let mut out = stdout.lock();
 
                     for (i, name) in names.iter().enumerate() {
-                        write!(out, "{:<width$}", name, width = col_width).unwrap();
+                        print!("{:<width$}", name, width = col_width);
                         if (i + 1) % cols == 0 {
-                            writeln!(out).unwrap();
+                            println!();
                         }
                     }
 
                     if names.len() % cols != 0 {
-                        writeln!(out).unwrap();
+                        println!();
                     }
+                    out.flush().unwrap();
                 }
                 else {
                     for line in entries {
