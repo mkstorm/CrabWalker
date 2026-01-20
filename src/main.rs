@@ -219,10 +219,19 @@ fn main() -> Result<()> {
                         .collect();
 
                     let max_len = names.iter().map(|s| s.len()).max().unwrap();
-                    let term_width = term_size::dimensions().map(|(w, _)| w).unwrap_or(80);
-                    let col_width = max_len + 2; // 2 spaces between columns
-                    let cols = (term_width / col_width).max(1); // at least 1 column
 
+                    let is_tty = stdout_is_tty();
+                    let term_width = if is_tty {
+                        term_size::dimensions().map(|(w, _)| w).unwrap_or(80)
+                    } else {
+                        0
+                    };
+                    let col_width = max_len + 2; // 2 spaces between columns
+                    let cols = if is_tty {
+                        (term_width / col_width).max(1) // at least 1 column
+                    } else {
+                        1
+                    };
                     let stdout = io::stdout();
                     let mut out = stdout.lock();
 
