@@ -5,10 +5,13 @@ use std::env;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::io::Result;
+use std::io::{self};
 use clap::Subcommand;
 use std::path::Path;
 use std::io::IsTerminal;
 use std::process::Command;
+use std::fs::DirEntry;
+
 
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
@@ -20,6 +23,9 @@ struct Cli {
     /// Favourite or Path
     #[arg(value_name = "TARGET")]
     target: Option<String>,
+    /// Show hidden
+    #[arg(short = 'a')]
+    all: bool,
     #[command(subcommand)]
     command: Option<Commands>,
 }
@@ -53,7 +59,7 @@ enum Commands {
         #[arg(long, default_value_t = 3)]
         depth: usize,
         /// Max entries to show visual only (not in pipe)
-        #[arg(short = 'e', long, default_value_t = 10)]
+        #[arg(short = 'e', long, default_value_t = 20)]
         entries: usize,
         /// Show hidden Entries
         #[arg(short = 'a')]
@@ -199,11 +205,59 @@ fn main() -> Result<()> {
                 }
                 eprintln!("Wrong path/favourite")
             } else {
-                eprintln!("No target specified")
+                let path = get_current_dir();
+                let entries = if cli.all {
+                    entries_in_dir(path.as_path(), true)
+                } else {
+                    entries_in_dir(path.as_path(), false)
+                };
+                if stdout_is_tty() {
+
+                    let names: Vec<String> = entries
+                        .iter()
+                        .map(entry_display_name)
+                        .collect();
+
+                    let max_len = names.iter().map(|s| s.len()).max().unwrap();
+                    let term_width = term_size::dimensions().map(|(w, _)| w).unwrap_or(80);
+                    let col_width = max_len + 2; // 2 spaces between columns
+                    let cols = (term_width / col_width).max(1); // at least 1 column
+
+                    let stdout = io::stdout();
+                    let mut out = stdout.lock();
+
+                    for (i, name) in names.iter().enumerate() {
+                        write!(out, "{:<width$}", name, width = col_width).unwrap();
+                        if (i + 1) % cols == 0 {
+                            writeln!(out).unwrap();
+                        }
+                    }
+
+                    if names.len() % cols != 0 {
+                        writeln!(out).unwrap();
+                    }
+                }
+                else {
+                    for line in entries {
+                        println!("{}", line.file_name().display());
+                    }
+                }
+                return Ok(());
             }
         }
     }
     Ok(())
+}
+
+fn entry_display_name(e: &DirEntry) -> String {
+    let icon = match e.file_type() {
+        Ok(ft) if ft.is_dir() => "📁",
+        Ok(ft) if ft.is_file() => "📄",
+        Ok(ft) if ft.is_symlink() => "🔗",
+        _ => "❓",
+    };
+
+    format!("{} {}", icon, e.file_name().to_string_lossy())
 }
 
 fn stdout_is_tty() -> bool {
@@ -318,7 +372,7 @@ fn create_tree(path: &Path, prefix: String, last: bool, max_depth: usize, max_en
 
     //let max_entries = 10;
     let name = path.file_name().unwrap_or_default().to_string_lossy();
-    let icon = if path.is_dir() { "📁" } else { "📄" };
+    let icon = icon_for_path(path);
     let connector = if last { "└─ " } else { "├─ " };
     println!("{}{}{} {}", prefix, connector, icon, name);
 
@@ -335,6 +389,15 @@ fn create_tree(path: &Path, prefix: String, last: bool, max_depth: usize, max_en
             let connector = "└─ ";
             println!("{}{}…", dots_prefix, connector);
         }
+    }
+}
+
+fn icon_for_path(path: &Path) -> &'static str {
+    match path.symlink_metadata() {
+        Ok(m) if m.is_dir() => "📁",
+        Ok(m) if m.is_file() => "📄",
+        Ok(m) if m.file_type().is_symlink() => "🔗",
+        _ => "❓",
     }
 }
 
@@ -392,7 +455,7 @@ fn handle_completion(partial: String) {
     let partial_upper = partial.to_uppercase();
     for fav in get_fav_names() {
         if fav.to_uppercase().starts_with(&partial_upper) {
-            println!("{fav}");
+            println!("fav:{fav}");
         }
     }
 }
