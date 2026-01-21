@@ -34,6 +34,8 @@ struct Cli {
 enum Commands {
     /// List Favourites
     List,
+    /// Up one dir
+    Up,
     /// Edit file
     Edit {
         #[arg(value_name = "PATH")]
@@ -97,6 +99,11 @@ fn main() -> Result<()> {
                 for line in get_fav_list().clone().into_iter().filter(|l| !l.to_string_lossy().trim().is_empty()) {
                     println!("{}", line.display());
                 }
+            }
+        }
+        Some(Commands::Up) => {
+            if let Some(parent) = get_current_dir().parent() {
+                println!("{}", parent.display());
             }
         }
         Some(Commands::Edit { path }) => {

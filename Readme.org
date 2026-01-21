@@ -10,7 +10,7 @@
   - [[#tree][Tree]]
   - [[#piping][Piping]]
   - [[#edit][Edit]]
-  - [[#current-directory-contents][Current directory Contents]]
+  - [[#list-dir][List Dir]]
 - [[#commands][Commands]]
 - [[#improvements][Improvements]]
 
@@ -90,7 +90,7 @@ cw edit "$(cw list | fzf)"
 Edit is added to give extra flexibility to files in the favourites, to quickly get to editing a file, that is often used.
 Edit wont work on folders.
 It uses the "$EDITOR" and defaults to nano.
-** Current directory Contents
+** List Dir
 Run the application with no subcommands to list files and folder in current dir
 #+begin_quote
 cw
@@ -103,11 +103,16 @@ The usage of the tool is as follows.
 cw [TARGET] [COMMAND]
 #+end_quote
 Where target can be a Path or a Favourite.
-- No command
+- Path
   cd to path or favourite.
-  or show current directory contents
+- No Command
+  Show current directory contents
+  - a
+    Shows hidden
 - List
   List all favourites.
+- Up
+  Jump up to parent directory
 - Edit
   Edit file from path or favourite.
 - Add
